@@ -10,10 +10,12 @@ dfpt1 = df2[pt1]
 df3 = dfpt1.drop(columns=['Curso','Período'])
 dadospt1 = df3.values
 
+
 #saber quantidade por periodo
 #df['Período'].value_counts()
 #saber o periodo maximo
 #df2['Período'].max()
+
 
 
 
@@ -69,13 +71,17 @@ plt.plot(range(1, 11), wcss)
 plt.title('O Metodo Elbow')
 plt.xlabel('Numero de Clusters')
 plt.ylabel('WSS') #within cluster sum of squares
-plt.show()
+#plt.show()
 print("\n")
 
 #nova coluna "Grupos"
 df3.insert(loc=16,column = "Grupo", value = rotulosk)
+#Adicionar período 
+dfper = dfpt1['Período']
+df3.insert(loc=17,column = "Período", value = dfper)
 #criar csv
-df3.to_csv(r'\Users\Pamella\Desktop\PIC 2019\K-Means\agrupamento1ptBiologia.csv', index=False)
+df3.to_csv(r'\Users\Pamella\Desktop\PIC 2019\K-Means\agrupamento1ptBiologia.csv', index=False,encoding = 'utf-8-sig', sep = ";")
+
 
 ###################################################################################
 
@@ -136,11 +142,15 @@ plt.plot(range(1, 11), wcss)
 plt.title('O Metodo Elbow')
 plt.xlabel('Numero de Clusters')
 plt.ylabel('WSS') #within cluster sum of squares
-plt.show()
+#plt.show()
 print("\n")
 
 #nova coluna "Grupos"
 df4.insert(loc=16,column = "Grupo", value = rotulosk2)
+#Adicionar período 
+dfper2 = dfpt2['Período']
+df4.insert(loc=17,column = "Período", value = dfper2)
 #criar csv
-df4.to_csv(r'\Users\Pamella\Desktop\PIC 2019\K-Means\agrupamento2ptBiologia.csv', index=False)
+df4.to_csv(r'\Users\Pamella\Desktop\PIC 2019\K-Means\agrupamento2ptBiologia.csv', index=False,encoding = 'utf-8-sig', sep = ";")
+
 
