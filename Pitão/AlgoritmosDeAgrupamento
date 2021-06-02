@@ -1,0 +1,204 @@
+importar  pandas  como  pd
+de  scipy . cluster . ligação de importação de hierarquia  
+de  scipy . cluster . hierarquia  importar  fcluster
+de  scipy . cluster . hierarquia  importar  dendrograma
+from  matplotlib  importar  pyplot
+de  sklearn . cluster  import  k_means
+de  sklearn . metrics  import  silhouette_score
+import  matplotlib . pyplot  como  plt
+de  sklearn . cluster  import  dbscan
+de  sklearn . métricas . cluster de  importação  adjusted_rand_score
+de  sklearn . importação de métricas  ajustada_rand_score 
+de  sklearn . importação de métricas  mutual_info_score 
+de  sklearn . importação de métricas  normalized_mutual_info_score 
+de  sklearn . metrics  import  precision_score
+de  sklearn . metrics  import  jaccard_similarity_score
+
+#################### LIMPEZA DATASET #######################
+
+#BIOLOGIA
+df  =  pd . read_csv ( 'baseGeral.csv' , encoding  =  "UTF-8" , sep  =  ";" , usecols = [ 0 , 2 , 46 , 47 , 48 , 49 , 50 ,
+51 , 53 , 54 , 55 , 56 , 58 , 59 , 0 , 2 , 12 , 15 , 28 , 29 , 36 , 44 ])
+
+
+
+# ADMINISTRAÇAO
+#metade do curso e gera o agrupamento ea tabela e depois a outra metade com todas as disciplinas
+'' '
+#primeiros semestres
+df = pd.read_csv ('baseGeral.csv', encoding = "UTF-8", sep = ";", usecols = [0,2,46,47,48,49,50,
+51,53,54,55,56,58,59])
+df2 = df [df ['Curso'] == 'Administração']
+selecao = (df2.Período == 1) | (df2.Período == 2) | (df2.Período == 3) | (df2.Período == 4)
+df3 = df2 [seleção]
+df4 = df3.drop (colunas = ['Curso', 'Período'])
+dados = df4.values
+#ultimos semestres
+df = pd.read_csv ('baseGeral.csv', encoding = "UTF-8", sep = ";", usecols = [0,2,46,47,48,49,50,
+51,53,54,55,56,58,59])
+df2 = df [df ['Curso'] == 'Administração']
+selecao = (df2.Período == 5) | (df2.Período == 6) | (df2.Período == 7) | (df2.Período == 8)
+df3 = df2 [seleção]
+df4 = df3.drop (colunas = ['Curso', 'Período'])
+dados = df4.values
+#merge do dataframe
+dfnovo = pd.read_csv ('baseGeral.csv', encoding = "UTF-8", sep = ";", usecols = [0,2,12,15,28,29,36,44])
+dfnv2 = dfnovo [dfnovo ['Curso'] == 'Administração']
+selecaonv = (dfnv2.Período == 5) | (dfnv2.Período == 6) | (dfnv2.Período == 7) | (dfnv2.Período == 8)
+dfnv3 = dfnv2 [selecaonv]
+################ HIERARQUICO #################################
+#h = linkage (dados, method = 'average', metric = 'chebyshev')
+#h = linkage (dados, method = 'complete', metric = 'chebyshev')
+#h = linkage (dados, method = 'single', metric = 'chebyshev')
+#h = linkage (dados, method = 'average', metric = 'euclidean')
+h = linkage (dados, method = 'complete', metric = 'euclidean')
+#h = linkage (dados, method = 'single', metric = 'euclidean')
+dendrograma (h)
+pyplot.show ()
+rotulos_dist = fcluster (h, t = 15, critério = 'distância')
+rotulos_k = fcluster (h, t = 2, criterio = 'maxclust')
+lh1 = []
+lh2 = []
+lh3 = []
+lh4 = []
+lh5 = []
+lh6 = []
+lh0 = []
+para i em rotulos_k:
+    se str (i) == "0":
+        lh0.append (i)
+    if str (i) == "1":
+        lh1.append (i)
+    se str (i) == "2":
+        lh2.append (i)
+    if str (i) == "3":
+        lh3.append (i)
+    se str (i) == "4":
+        lh4.append (i)
+    se str (i) == "5":
+        lh5.append (i)
+    se str (i) == "6":
+        lh6.append (i)
+imprimir ("Quantidade de pessoas por grupos no Hierarquico")
+print (len (lh1), "No 1 grupo")
+imprimir (len (lh2), "No 2 grupo")
+imprimir (len (lh3), "No 3 grupo")
+imprimir (len (lh4), "No 4 grupo")
+#print (len (lh5), "No 5 grupo")
+#print (len (lh6), "No 6 grupo")
+#print (" \ n ")
+################### KMEANS ###############################
+centroides, rotulosk, sse = k_means (dados, n_clusters = 2, init = 'random', n_init = 100)
+l1 = []
+l2 = []
+l3 = []
+l4 = []
+l5 = []
+l6 = []
+l0 = []
+para i em rotulosk:
+    se str (i) == "0":
+        10.append (i)
+    if str (i) == "1":
+        l1.append (i)
+    se str (i) == "2":
+        l2.append (i)
+    if str (i) == "3":
+        l3.append (i)
+    se str (i) == "4":
+        l4.append (i)
+    se str (i) == "5":
+        l5.append (i)
+    se str (i) == "6":
+        l6.append (i)
+imprimir ("Quantidade de pessoas por grupos no K-Means")
+imprimir (len (l0), "No 1 grupo")
+imprimir (len (l1), "No 2 grupo")
+imprimir (len (l2), "No 3 grupo")
+imprimir (len (l3), "No 4 grupo")
+#print (len (l4), "No 5 grupo")
+#print (len (l5), "No 6 grupo \ n ")
+###########################Cotovelo###################### #
+imprimir (" \ n Metódo do cotovelo")
+de sklearn.cluster import KMeans
+X = dados
+wcss = []
+ 
+para i no intervalo (1, 11):
+    kmeans = KMeans (n_clusters = i, init = 'aleatório')
+    kmeans.fit (X)
+    imprimir ((i, kmeans.inertia_))
+    wcss.append (kmeans.inertia_)  
+plt.plot (intervalo (1, 11), wcss)
+plt.title ('O Metodo Elbow')
+plt.xlabel ('Numero de Clusters')
+plt.ylabel ('WSS') # dentro da soma dos quadrados do cluster
+plt.show ()
+imprimir (" \ n ")
+#nova coluna "Grupos"
+# df4.insert (loc = 12, coluna = "Grupo", valor = rotulosk)
+#criar csv
+#merge csv
+#res = pd.concat ([df4, dfnv3], sort = False)
+#res = res.drop (['k'], eixo = 1)
+####################### ANALISE DE SILHUETA #############################
+s = silhouette_score (dados, rotulos, metric = 'sqeuclidean')
+impressão (s, "pontuação da silhueta")
+############################# DBSCAN ############################
+importar numpy como np
+de sklearn.datasets.samples_generator import make_blobs
+from sklearn.neighbors import NearestNeighbors
+de sklearn.cluster import DBSCAN
+de matplotlib importar pyplot como plt
+de matplotlib importar pyplot como plt1
+neigh = NearestNeighbors (n_neighbors = 2)
+nbrs = neigh.fit (dados)
+distâncias, índices = nbrs.kneighbors (dados)
+distâncias = np.sort (distâncias, eixo = 0)
+distâncias = distâncias [:, 1]
+plt.plot (distâncias)
+plt.show ()
+m = DBSCAN (eps = 3, min_samples = 12)
+m.fit (dados)
+clusters = m.labels_
+cores = ['royalblue', 'maroon', 'forestgreen', 'mediumorchid', 'tan', 'deeppink', 'olive'] 
+vetorizador = np.vectorize (lambda x: núcleos [x% len (núcleos)])
+plt1.scatter (dados [:, 0], dados [:, 1], c = vetorizador (clusters))
+plt1.show ()
+l1 = []
+l2 = []
+ln1 = []
+l3 = []
+l0 = []
+l4 = []
+para i em clusters:
+    se str (i) == "0":
+        10.append (i)
+    if str (i) == "1":
+        l1.append (i)
+    se str (i) == "2":
+        l2.append (i)
+    if str (i) == "3":
+        l3.append (i)
+    se str (i) == "4":
+        l4.append (i)
+    if str (i) == "-1":
+        ln1.append (i)
+        
+imprimir ("Quantidade de pessoas por grupos no DBSCAN")
+imprimir (len (l0), "No 0 grupo")
+imprimir (len (l1), "No 1 grupo")
+imprimir (len (l2), "No 2 grupo")
+print (len (ln1), "No -1 grupo")
+imprimir (len (l3), "No 3 grupo")
+imprimir (len (l4), "No 4 grupo")
+####################### INDICE RAND ##########################
+#Indice rand do hierarquico e nao hierarquico
+ir = ajustado_rand_score (rotulos_k, rotulosk)
+imprimir (ir)
+# Calculando o IMN.
+imn = normalized_mutual_info_score (rotulos_k, rotulosk)
+imprimir (imn)
+jaccard_similarity_score (rotulos_k, rotulosk)
+imprimir (jaccard_similarity_score)
+'' '
