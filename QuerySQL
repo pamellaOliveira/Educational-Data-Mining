@@ -1,0 +1,72 @@
+# PARA A DISCIPLINA (APENAS UMA VEZ) !!!!!!
+
+# pegar o nome de tds os q responderam os 4 foruns da disciplina
+CRIAR  TABELA  info_qmrespondeu_4forum_informaticaaplicada
+SELECT  f . discussão , f . ID do usuário , f . assunto , f. mensagem,
+u . id , u . primeiro nome
+FROM  basepesq . mdl_forum_posts  as f
+JUNÇÃO INTERNA 
+mdl_user como u em  f . userid  =  u . eu ia
+onde discussão =  25  ou discussão =  26  ou discussão =  27  ou discussão =  28 
+agrupar por ID do usuário;
+
+# PARA CADA FORUM !!!!!!!!
+# escolher disciplina e pegar o id do fórum
+SELECT  *  FROM  basepesq . discbiologia ;
+
+# saber ql o iddiscussion do forum
+SELECT  *  FROM  basepesq . mdl_forum_discussions  onde forum =  58 ;
+
+# ver a interaçao no forum
+# pegar nome de qm interagiu no fórum
+criar  tabela  interacao_forum58
+SELECT  f . discussão , f . ID do usuário , f . assunto , f . mensagem , u . id , u . primeiro nome
+FROM  basepesq . mdl_forum_posts  como f, mdl_user como u
+onde discussão =  28
+e  f . userid  =  u . eu ia
+agrupar por ID do usuário;
+
+# pegar o g.itemig
+SELECT  *  FROM  basepesq . mdl_grade_items  onde courseid =  54 ;
+
+
+# informaçao (nota e nome) qm respondeu ao fórum 44
+criar  tabela  informacao_qmrespondeu_forum58
+SELECT  i . discussão , i . assunto , i . mensagem ,
+eu . ID do usuário , u . primeiro nome , u . sobrenome , g . itemid , g . Rawgrade
+FROM interacao_forum58 as i, mdl_user as u, mdl_grade_grades as g
+onde  eu . userid  =  u . eu ia
+e  eu . userid  =  g . ID do usuário
+e  g . itemid  =  169 ;
+
+
+# interação no fórum qm respondeu ao fórum mandou e mensagem personalizada p qm?
+# qm respondeu ao fórum (idfrom) c qm ele mandou mensagem (idto)
+# ou qm respondeu ao fórum (idto) personalizada mensagem de qm (idfrom)
+# tabelas usadas seraõ qmRespondeuDiscElemntosGeologia e mdl_message
+CRIAR  TABELA  interacao_messagem_forum_58
+SELECT  d . discussão , d . ID do usuário , d . assunto , d . mensagem ,
+m . useridto , m . useridfrom , m . mensagem completa
+FROM interacao_forum58 as d, mdl_message m
+# o userid da disciplina é useridto de mensagem
+# quem respondeu ao fórum (idto) verificar mesnsagem de (idfrom)
+onde  d . userid  =  m . useridto
+# qm respondeu ao fórum (idfrom) adicionou mensagem p quem ((idto)
+ou  d . userid  =  m . useridfrom ;
+
+
+# PARA PEGAR AS NOTAS DAS ATIVIDADES WEBQUEST E AVALIAÇAO PRESENCIAL
+# DE QUEM RESPONDEU OS 4 FORUNS
+
+# 1 PASSO: procurar o itemid da atividade procurando pelo id do curso
+SELECT  *  FROM  basepesq . mdl_grade_items  WHERE COURSEID =  54 ;
+
+
+# nota de qm respondeu os 4 foruns em cada avaliação (webquest, presencial)
+CRIAR  TABELA  nota2ava_pres_informaticaAplicada
+SELECT   d . discussão , d . assunto , d. mensagem, d . id , d . primeiro nome ,
+g . rawgrade , g . ID do usuário , g . itemid
+FROM  basepesq . info_qmrespondeu_4forum_informaticaaplicada  as d
+JUNÇÃO INTERNA 
+mdl_grade_grades como g em  g . userid  =  d . ID do usuário
+onde  g . itemid  =  174 ; # MUDAR DE ACORDO A ATIVIDADE
