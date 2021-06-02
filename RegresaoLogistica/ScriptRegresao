@@ -1,0 +1,32 @@
+dados <- read.csv2('C:\\Users\\Pamella\\Documents\\PIC Pamella\\PIC2020\\moodle\\Parte2\\DIsCIPLINASFINAL\\info_curso_biologia_binarizado_APENASALUNOS.csv', stringsAsFactors=TRUE)
+
+
+# Separação dos dados de treinamento e de teste
+treinamento <- dados[1:round(nrow(dados)*0.7),] # 70%
+teste <- dados[round((round(nrow(dados)*0.7))+1):nrow(dados),]    # 30%
+
+
+# Criação do Modelo a partir dos dados de treinamento
+modeloInicial <- glm(BinarioMaior7 ~ closenes1 + closenes2 + closenes3 + closenes4,family=binomial(link="logit"),data=treinamento)
+#summary(modeloInicial)
+
+
+# Gerando o vetor de probabilidades
+classificacaoProb <- predict(modeloInicial,newdata=teste,type="response")
+classificacaoBinaria <- ifelse(classificacaoProb > 0.50,1,0)
+
+
+#library(caret) 
+# Geração da Matriz de confusão e métricas para a análise do modelo
+MatrizDeConfusao <- confusionMatrix(table(data=classificacaoBinaria,reference=teste$BinarioMaior7))
+MatrizDeConfusao
+
+
+# Curva ROC
+install.packages('pscl')
+library('ROCR')   
+library('pscl') 
+FG <- prediction(classificacaoProb[1:439], teste$BinarioMaior7[1:439])
+pFG <- performance(FG, measure = "tpr", x.measure = "fpr")
+plot(pFG,col="blue",lwd=2,main="ROC Curve for Logistic")
+abline(a=0,b=1,lwd=2,lty=2,col="gray")
