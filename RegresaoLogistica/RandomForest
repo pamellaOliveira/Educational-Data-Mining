@@ -1,0 +1,40 @@
+install.packages('randomForest')
+library('randomForest')
+
+dados <- read.csv2('C:\\Users\\Pamella\\Documents\\PIC Pamella\\PIC2020\\moodle\\Parte2\\DIsCIPLINASFINAL\\info_curso_biologia_binarizado_APENASALUNOS.csv', stringsAsFactors=TRUE)
+
+
+# Separação dos dados de treinamento e de teste
+treinamento <- dados[1:round(nrow(dados)*0.7),] # 70%
+teste <- dados[round((round(nrow(dados)*0.7))+1):nrow(dados),]    # 30%
+
+
+modeloForest<-randomForest(BinarioMaiorMedia ~ closenes1 + closenes2 + closenes3 + closenes4,family=binomial,data=treinamento)
+
+
+#library(caret)
+classificacaoProb <- predict(modeloForest,teste)
+
+listaLimiar <- c(0.25,0.27,0.30,0.32,0.35,0.37,0.40,0.45,0.47,0.50,0.52,0.55,0.57,0.60,0.62,0.65)
+listaAcuracia <- c()
+listaKappa <- c()
+
+for (i in 1:length(listaLimiar)){
+  classificacaoBinaria <- ifelse(classificacaoProb > listaLimiar[i],1,0)
+  print(listaLimiar[i])
+  # Geração da Matriz de cclassificacaoProb <- predict(modeloInicial,newdata=teste,type="response")onfusão e métricas para a análise do modelo
+  MatrizDeConfusao <- confusionMatrix(table(data=classificacaoBinaria,reference=teste$BinarioMaiorMedia))
+  listaAcuracia[i] <- MatrizDeConfusao$overall[1]
+  listaKappa[i] <- MatrizDeConfusao$overall[2]
+  
+}
+
+listaAcuracia
+listaKappa
+
+library('ROCR')   
+library('pscl') 
+FG <- prediction(classificacaoProb[1:439], teste$BinarioMaiorMedia[1:439])
+pFG <- performance(FG, measure = "tpr", x.measure = "fpr")
+plot(pFG,col="blue",lwd=2,main="ROC Curve for Modelo Forest")
+abline(a=0,b=1,lwd=2,lty=2,col="gray")
