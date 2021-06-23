@@ -1,0 +1,54 @@
+dados <- info_curso_biologia_atualizado_tdsBinarizacao
+
+#criando csv apenas c determinadas colunas
+dados <- info_curso_biologia_atualizado(c(1,2))
+dados <- info_curso_biologia_atualizado[c(5,10,15,20,42)] #apenasindegre
+
+#retirando os alunos q nao fizeram uma das provas
+dados <- dados[dados$nota1avalp != 0 & dados$nota2avalp != 0,]
+
+#retirando os alunos q nao participaram dos foruns
+library(dplyr)
+dados2 <- filter(dados, dados$indegre1 == 0 & dados$indegre2 == 0 & dados$indegre3 == 0 & dados$indegre4 == 0 &
+               dados$degre1 == 0 & dados$degre2 == 0 & dados$degre3 == 0 & dados$degre4 == 0 &
+               dados$outdegre1 == 0 & dados$outdegre2 == 0 & dados$outdegre3 == 0 & dados$outdegre4 == 0 &
+               dados$closenes1 == 0 & dados$closenes2 == 0 & dados$closenes3 == 0 & dados$closenes4 == 0 &
+               dados$betwenes1 == 0 & dados$betwenes2 == 0 & dados$betwenes3 == 0 & dados$betwenes4 == 0)
+
+
+dados3<-anti_join(dados,dados2,by=c("disciplina",'id','nome'))
+
+
+#mudadno de "," para "."
+dados$betwenes4 <- as.numeric(sub(",", ".", dados$betwenes4, fixed = TRUE))
+dados$closenes4 <- as.numeric(sub(",", ".", dados$closenes4, fixed = TRUE))
+dados$MediaWebquest <- as.numeric(sub(",", ".", dados$MediaWebquest, fixed = TRUE))
+
+
+#selecionando apenas uma disciplina
+#dados <- dados[dados$disciplina == 'elementos',]
+info_curso_biologia_atualizado_$DesempenhoProvas <- as.character(info_curso_biologia_atualizado_$DesempenhoProvas)
+
+
+#criando coluna desempenho mediawebquest com peso
+#1.65 foi o valor onde o maior valor ficava abaixo de 10
+library(dplyr)
+dados$MediaForuns <- as.numeric(sub(",", ".", dados$MediaForuns, fixed = TRUE))
+dados <- dados %>% mutate(desempenhoForum <- as.numeric(MediaForuns)*2)
+class(dados$MediaForuns)
+
+#maximo de uma coluna
+m <- max(dados$`desempenhoForum <- as.numeric(MediaForuns) * 2`)
+
+
+#criando coluna binarizada maior media de desempenhoWebquest
+mediaColunaDesempenhoForum <- mean(x = dados$`desempenhoForum <- as.numeric(MediaForuns) * 2`)
+#valorda Media foi 6.39 entao a partir dela fazer a binarização do desempenhoWebquest
+dados$binarizacaoMaiorMediaForum <- ifelse(dados$`desempenhoForum <- as.numeric(MediaForuns) * 2` > 7.53,1,0)
+table(dados$binarizacaoMaiorMediaWeb)
+
+#excluindo colunas do dataframe 
+dados$`desempenhoForum <- as.numeric(MediaForuns) * 1.99`<- NULL
+
+#exportando o csv v as alterações
+write.csv2(dados, "info_curso_biologia_atualizado_tdsBinarizacao.csv", row.names = TRUE)
