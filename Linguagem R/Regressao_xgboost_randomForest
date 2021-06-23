@@ -1,0 +1,55 @@
+ #####SEPARANDO TREINO E TESTE #########
+library(caret)
+set.seed(550)
+inTraining <- createDataPartition(dados$binarizacaoMaiorMediaForum, p = .70, list = FALSE) ###mudar
+treinamento <- dados[ inTraining,]
+teste  <- dados[-inTraining,]
+table(teste$binarizacaoMaiorMediaForum) #mudar
+
+#####VALIDAÇAO CRUZADA ###########
+fitControl2 <- trainControl(
+  method = "repeatedcv",
+  number = 10,
+  repeats = 10)
+
+####REGRESSSAO LOGISTICA ######
+set.seed(550)
+###mudar
+gbmFit8 <- train(factor(binarizacaoMaiorMediaForum) ~ indegre1 + indegre2 + indegre3 + indegre4,
+                 data = treinamento, 
+                 method = 'glm',
+                 family = 'binomial',
+                 trControl = fitControl2)
+
+
+
+####RANDOM FOREST ####
+modeloForest<-randomForest(binarizacaoMaiorMediaForum ~ indegre1 + indegre2 + indegre3 + indegre4,family=binomial,data=treinamento)
+
+
+####
+
+####XGBOOST ####
+trainm <- sparse.model.matrix(binarizacaoMaiorMediaForum ~ indegre1 + indegre2 + indegre3 + indegre4, data = treinamento)
+train_label <- treinamento$binarizacaoMaiorMediaForum
+train_matrix <- xgb.DMatrix(data = as.matrix(trainm), label = train_label)
+
+
+testm <- sparse.model.matrix(binarizacaoMaiorMediaForum ~ indegre1 + indegre2 + indegre3 + indegre4, data = teste)
+test_label <- teste$binarizacaoMaiorMediaForum
+test_matrix <- xgb.DMatrix(data = as.matrix(testm), label = test_label)
+
+
+bst_model2 <- xgboost(data = train_matrix, label = train_label, max_depth = 2,
+                     eta = 0.5, nthread = 2, nrounds = 100 , objective = "binary:logistic")
+
+####PREDIACAO ####
+classificacaoProb2 <- predict(bst_model2,test_matrix) #test_matrix PARA XGBOOST
+classificacaoModelo <- ifelse(classificacaoProb > 0.50,1,0)
+table(classificacaoModelo)
+
+
+####MATRIZ CONFUSAO ####
+MatrizDeConfusao <- confusionMatrix(table(data=classificacaoModelo,reference=teste$binarizacaoMaiorMediaForum),positive = '1')
+MatrizDeConfusao
+MatrizDeConfusao
